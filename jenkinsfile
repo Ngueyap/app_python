@@ -15,7 +15,7 @@ pipeline {
                     //powershell(returnStdout: true, script: '$pythonPath = (where python)')
                     //powershell "$pythonPath -m pytest unittest"
                     //bat 'python -m pytest unittest'
-                    //echo 'Pipeline successful'
+                    echo 'Pipeline successful'
                     //bat 'C:/Users/hp/AppData/Local/Microsoft/WindowsApps/python -m pytest unittest'
                 }
             }
