@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+    stages {
+
+        stage('Building') {
+            steps {
+                script {
+                    bat 'docker build -t jenkifile .'
+                }
+            }
+        }
+        stage('Testing') {
+            steps {
+                script {
+                    //powershell(returnStdout: true, script: '$pythonPath = (where python)')
+                    //powershell "$pythonPath -m pytest unittest"
+                    //bat 'python -m pytest unittest'
+                    echo 'Pipeline successful'
+                    //bat 'C:/Users/hp/AppData/Local/Microsoft/WindowsApps/python -m pytest unittest'
+                }
+            }
+        }
+        stage('Deploying') {
+            steps {
+                script {
+                        echo 'Pipeline successful '
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline successful'
+        }
+        failure {
+            echo 'Pipeline failed'
+        }
+    }
+}
+
