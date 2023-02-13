@@ -5,7 +5,7 @@ pipeline {
         stage('Building') {
             steps {
                 script {
-                    #bat 'docker build -t jenkifile .'
+                    bat 'docker build -t jenkifile .'
                     echo 'Pipeline successful'
                     
                 }
