@@ -5,8 +5,8 @@ pipeline {
         stage('Building') {
             steps {
                 script {
-                    //bat 'docker build -t jenkifile .'
-                    echo 'Pipeline successful'
+                    bat 'docker build -t jenkifile .'
+                    //echo 'Pipeline successful'
                     
                 }
             }
@@ -14,8 +14,8 @@ pipeline {
         stage('Testing') {
             steps {
                 script {
-                    echo 'Pipeline successful'
-                    //bat 'C:/Users/hp/AppData/Local/Microsoft/WindowsApps/python -m pytest unittest'
+                    //echo 'Pipeline successful'
+                    bat 'C:/Users/hp/AppData/Local/Microsoft/WindowsApps/python -m pytest unittest'
                 }
             }
         }
