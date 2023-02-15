@@ -13,7 +13,7 @@ pipeline {
         }*/
       stage('Checkout') {
             steps {
-                sshagent(credentials: ['github_ssh']) {
+                sshagent(credentials: ['git_ssh']) {
                     bat "git branch --delete staging"
                     bat "git branch staging"
                     bat "git checkout staging"
@@ -28,7 +28,7 @@ pipeline {
         }
         stage('Cleanup') {
             steps {
-                sshagent(credentials: ['github_ssh']) { /*
+                sshagent(credentials: ['git_ssh']) { /*
                     bat 'git push origin -d staging'
                     echo "deleted staging"
                     */
