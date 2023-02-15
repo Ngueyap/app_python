@@ -1,39 +1,41 @@
 pipeline {
-    agent any
-    stages {
-
-        stage('Building') {
-            steps {
-                script {
-                    bat 'docker build -t jenkifile .'
-                    //echo 'Pipeline successful'
-                    
-                }
-            }
-        }
-        stage('Testing') {
-            steps {
-                script {
-                    //echo 'Pipeline successful'
-                    bat 'C:/Users/hp/AppData/Local/Microsoft/WindowsApps/python -m pytest unittest'
-                }
-            }
-        }
-        stage('Deploying') {
-            steps {
-                script {
-                        echo 'Pipeline successful '
-                }
-            }
-        }
-    }
-    post {
-        success {
-            echo 'Pipeline successful'
-        }
-        failure {
-            echo 'Pipeline failed'
-        }
-    }
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Checkout') {
+            steps {
+                sshagent(credentials: ['git_ssh']) {
+                    sh "git branch --delete staging"
+                    sh "git branch staging"
+                    sh "git checkout staging"
+                    sh "git push origin staging"
+                }
+            }
+        }
+        stage('Other Stuff') {
+            steps {
+                echo "doing other stuff"
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                sshagent(credentials: ['git_ssh']) {
+                    /*
+                    sh "git push origin -d staging"
+                    echo "deleted staging"
+                    */
+                }
+            }
+        }
+    }
 }
 
