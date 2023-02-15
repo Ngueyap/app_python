@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+       /*stage('Build') {
             steps {
                 bat 'mvn clean package'
             }
@@ -10,14 +10,14 @@ pipeline {
             steps {
                 bat 'mvn test'
             }
-        }
-        stage('Checkout') {
+        }*/
+      stage('Checkout') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'github_ssh', keyFileVariable: 'SSH_KEY_FILE', passphraseVariable: '', usernameVariable: 'SSH_USERNAME')]) {
-                    bat 'git branch --delete staging'
-                    bat 'git branch staging'
-                    bat 'git checkout staging'
-                    bat 'git push origin staging'
+                sshagent(credentials: ['github_ssh']) {
+                    bat "git branch --delete staging"
+                    bat "git branch staging"
+                    bat "git checkout staging"
+                    bat "git push origin staging"
                 }
             }
         }
@@ -28,8 +28,7 @@ pipeline {
         }
         stage('Cleanup') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'github_ssh', keyFileVariable: 'SSH_KEY_FILE', passphraseVariable: '', usernameVariable: 'SSH_USERNAME')]) {
-                    /*
+                sshagent(credentials: ['github_ssh']) { /*
                     bat 'git push origin -d staging'
                     echo "deleted staging"
                     */
