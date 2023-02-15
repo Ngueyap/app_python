@@ -1,41 +1,40 @@
 pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {
-                sh 'mvn clean package'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-        stage('Checkout') {
-            steps {
-                sshagent(credentials: ['git_ssh']) {
-                    sh "git branch --delete staging"
-                    sh "git branch staging"
-                    sh "git checkout staging"
-                    sh "git push origin staging"
-                }
-            }
-        }
-        stage('Other Stuff') {
-            steps {
-                echo "doing other stuff"
-            }
-        }
-        stage('Cleanup') {
-            steps {
-                sshagent(credentials: ['git_ssh']) {
-                    /*
-                    sh "git push origin -d staging"
-                    echo "deleted staging"
-                    */
-                }
-            }
-        }
-    }
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                bat 'mvn clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                bat 'mvn test'
+            }
+        }
+        stage('Checkout') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'github_ssh', keyFileVariable: 'SSH_KEY_FILE', passphraseVariable: '', usernameVariable: 'SSH_USERNAME')]) {
+                    bat 'git branch --delete staging'
+                    bat 'git branch staging'
+                    bat 'git checkout staging'
+                    bat 'git push origin staging'
+                }
+            }
+        }
+        stage('Other Stuff') {
+            steps {
+                echo "doing other stuff"
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'github_ssh', keyFileVariable: 'SSH_KEY_FILE', passphraseVariable: '', usernameVariable: 'SSH_USERNAME')]) {
+                    /*
+                    bat 'git push origin -d staging'
+                    echo "deleted staging"
+                    */
+                }
+            }
+        }
+    }
 }
-
