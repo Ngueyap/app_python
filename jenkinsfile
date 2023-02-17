@@ -1,39 +1,41 @@
 pipeline {
-    agent any
-    stages {
-       /*stage('Build') {
-            steps {
-                bat 'mvn clean package'
-            }
-        }
-        stage('Test') {
-            steps {
-                bat 'mvn test'
-            }
-        }*/
-      stage('Checkout') {
-            steps {
-                sshagent(credentials: ['git_ssh']) {
-                    bat "git branch --delete staging"
-                    bat "git branch staging"
-                    bat "git checkout staging"
-                    bat "git push origin staging"
-                }
-            }
-        }
-        stage('Other Stuff') {
-            steps {
-                echo "doing other stuff"
-            }
-        }
-        stage('Cleanup') {
-            steps {
-                sshagent(credentials: ['git_ssh']) { /*
-                    bat 'git push origin -d staging'
-                    echo "deleted staging"
-                    */
-                }
-            }
+  agent any
+  environment {
+    IMAGE_TAG = "ci-docker:latest"
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+    stage('Creating the staging branch') {
+    steps {
+      //bat "git branch --delete staging"
+      bat "git checkout -b staging"
         }
     }
+    stage('Build and Push Docker Image to dockerhub') {
+      steps{
+          bat 'docker build -t jenkins . -t ngueyap/ci-docker:latest'
+          bat 'docker run -d jenkins'
+      }
+    }
+    stage('Test') {
+      steps {
+        bat 'C:/Users/hp/AppData/Local/Programs/Python/Python38/python -m pip install flask'
+        bat ' C:/Users/hp/AppData/Local/Programs/Python/Python38/python -m unittest'
+      }
+    }
+    stage('Merge to Main Branch') {
+      steps {
+        sshagent(credentials: ['github_ssh']){
+            bat 'git checkout main'
+            bat 'git pull origin main'
+            bat 'git merge staging'
+            bat 'git push origin main'
+        }
+      }
+    }
+  }
 }
