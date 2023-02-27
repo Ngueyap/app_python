@@ -11,7 +11,7 @@ pipeline {
     }
     stage('Creating the staging branch') {
     steps {
-      //bat "git branch --delete staging"
+      bat "git branch --delete staging"
       bat "git checkout -b staging"
         }
     }
